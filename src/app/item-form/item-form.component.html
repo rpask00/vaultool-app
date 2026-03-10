@@ -12,7 +12,7 @@
         <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 w-1/2 pr-5">
           @for (_ of Array.from({length: 5}); track $index) {
             <div
-              class="w-full aspect-square object-cover rounded-xl bg-sky-400/20 mr-2 mb-2 flex items-center justify-center"
+              class="w-full aspect-square object-cover rounded-xl bg-sky-400/10 mr-2 mb-2 flex items-center justify-center"
             >
               <mat-icon>camera_alt</mat-icon>
             </div>
@@ -26,6 +26,8 @@
         </div>
 
         <div class="flex flex-col gap-2 w-1/2">
+          <h1 class="mb-4">Dodaj przedmiot</h1>
+
           <mat-form-field class="w-full" appearance="outline">
             <mat-label>Nazwa</mat-label>
             <input matInput/>
@@ -33,7 +35,7 @@
 
           <mat-form-field class="w-full" appearance="outline">
             <mat-label>Opis</mat-label>
-            <textarea matInput></textarea>
+            <textarea rows="4" matInput></textarea>
           </mat-form-field>
 
           <div class="flex justify-end w-full">
@@ -45,7 +47,7 @@
             >
               Zamknij
             </button>
-            <button  matButton="filled" (click)="formOpen.set(false)">
+            <button matButton="filled" (click)="formOpen.set(false)">
               DODAJ
             </button>
           </div>

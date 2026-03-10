@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { ClickStopPropagationDirective } from '../../directives/click-stop-propagation.directive';
@@ -6,6 +6,9 @@ import { NgClass } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { form, FormField } from '@angular/forms/signals';
 import { Item } from '../services/items.model';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.state';
+import { addItem, loadItems } from '../store/app.actions';
 
 @Component({
   selector: 'app-item-form',
@@ -23,6 +26,8 @@ import { Item } from '../services/items.model';
   styleUrl: './item-form.component.css',
 })
 export class ItemFormComponent {
+  readonly store: Store<AppState> = inject(Store<AppState>);
+
   readonly formOpen = signal(false);
   protected readonly Array = Array;
 
@@ -37,6 +42,10 @@ export class ItemFormComponent {
   protected addPhoto() {}
 
   protected add() {
-    console.log(this.itemModel());
+    this.store.dispatch(
+      addItem.action({
+        item: this.itemModel(),
+      }),
+    );
   }
 }

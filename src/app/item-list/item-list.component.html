@@ -1,1 +1,7 @@
-<p>item-list works!</p>
+<section>
+  @if (items$ | async; as items) {
+    @for (item of items; track item.id) {
+      <p>{{ item.name }}</p>
+    }
+  }
+</section>

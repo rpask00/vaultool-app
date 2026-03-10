@@ -7,6 +7,12 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { appReducer } from './store/app.reducers';
 import { AppEffects } from './store/app.effects';
 
+
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000',
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideStore({ app: appReducer }),

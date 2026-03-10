@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Item, ListResponse } from './items.model';
+import { Item, ItemDto, ListResponse } from './items.model';
 import { environment } from '../app.config';
 
 @Injectable({
@@ -19,11 +19,11 @@ export class ItemsResource {
     return this._http.get<Item>(`${environment.apiUrl}/${this.resource}/${id}`);
   }
 
-  public create(item: Item) {
+  public create(item: ItemDto) {
     return this._http.post<Item>(`${environment.apiUrl}/${this.resource}`, item);
   }
 
-  public update(id: number, item: Partial<Item>) {
+  public update(id: number, item: ItemDto) {
     return this._http.put<Item>(`${environment.apiUrl}/${this.resource}/${id}`, item);
   }
 

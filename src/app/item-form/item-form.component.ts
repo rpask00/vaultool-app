@@ -35,7 +35,7 @@ export class ItemFormComponent implements OnInit {
   protected readonly Array = Array;
 
   readonly emptyItem: Item = {
-    id: null,
+    id: 0,
     quantity: 0,
     tags: [],
     name: '',

@@ -36,8 +36,8 @@ export class AppEffects {
   updateItem$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateItem.action),
-      switchMap(({ item }) =>
-        this.itemsResource.update(item.id as number, item).pipe(
+      switchMap(({ item, id }) =>
+        this.itemsResource.update(id, item).pipe(
           map((item) => updateItem.success({ item })),
           catchError((err) => of(updateItem.failed({ error: err.message }))),
         ),

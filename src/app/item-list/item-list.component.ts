@@ -31,7 +31,7 @@ export class ItemListComponent implements OnInit {
     this.appService.editItem$.next(item);
   }
 
-  protected delete(id: number | null) {
-    this.store.dispatch(deleteItem.action({ id: id as number }));
+  protected delete(id: number) {
+    this.store.dispatch(deleteItem.action({ id }));
   }
 }

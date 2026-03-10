@@ -23,11 +23,11 @@ export class ItemsResource {
     return this._http.post<Item>(`${environment.apiUrl}/${this.resource}`, item);
   }
 
-  public update(id: string, item: Partial<Item>) {
+  public update(id: number, item: Partial<Item>) {
     return this._http.put<Item>(`${environment.apiUrl}/${this.resource}/${id}`, item);
   }
 
-  public delete(id: string) {
+  public delete(id: number) {
     return this._http.delete<void>(`${environment.apiUrl}/${this.resource}/${id}`);
   }
 }

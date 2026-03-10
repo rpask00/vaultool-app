@@ -19,7 +19,7 @@ export const deleteItem = {
 };
 
 export const updateItem = {
-  action: createAction('[App] Update Item'),
+  action: createAction('[App] Update Item', props<{ item: Item; id: number }>()),
   success: createAction('[App] Update Item Success', props<{ item: Item }>()),
   failed: createAction('[App] Update Item Failed', props<{ error: string }>()),
 };

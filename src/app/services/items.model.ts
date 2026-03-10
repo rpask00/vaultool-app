@@ -6,7 +6,7 @@ export interface ListResponse<T> {
 }
 
 export interface Item {
-  id?: number;
+  id: number | null;
   name: string;
   description: string;
   quantity: number;

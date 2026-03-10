@@ -26,7 +26,13 @@
         </div>
 
         <div class="flex flex-col gap-2 w-1/2">
-          <h1 class="mb-4">Dodaj przedmiot</h1>
+          <h1 class="mb-4">
+            @if (itemModel().id) {
+              Edytuj przedmiot
+            } @else {
+              Dodaj przedmiot
+            }
+          </h1>
 
           <mat-form-field class="w-full" appearance="outline">
             <mat-label>Nazwa</mat-label>
@@ -40,7 +46,9 @@
 
           <div class="flex justify-end w-full">
             <button class="mr-3" matButton="tonal" (click)="formOpen.set(false)">Zamknij</button>
-            <button [disabled]="!itemModel().name" matButton="filled" (click)="add()">DODAJ</button>
+            <button [disabled]="!itemModel().name" matButton="filled" (click)="save()">
+              Zapisz
+            </button>
           </div>
         </div>
       </div>

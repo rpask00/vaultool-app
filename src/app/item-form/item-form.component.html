@@ -10,7 +10,7 @@
     <section clickStopPropagation class="w-full">
       <div class="flex w-full">
         <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 w-1/2 pr-5">
-          @for (_ of Array.from({length: 5}); track $index) {
+          @for (_ of Array.from({ length: 5 }); track $index) {
             <div
               class="w-full aspect-square object-cover rounded-xl bg-sky-400/10 mr-2 mb-2 flex items-center justify-center"
             >
@@ -30,26 +30,17 @@
 
           <mat-form-field class="w-full" appearance="outline">
             <mat-label>Nazwa</mat-label>
-            <input matInput/>
+            <input [formField]="itemForm.name" matInput />
           </mat-form-field>
 
           <mat-form-field class="w-full" appearance="outline">
             <mat-label>Opis</mat-label>
-            <textarea rows="4" matInput></textarea>
+            <textarea [formField]="itemForm.description" rows="4" matInput></textarea>
           </mat-form-field>
 
           <div class="flex justify-end w-full">
-            <button
-
-              class="mr-3"
-              matButton="tonal"
-              (click)="formOpen.set(false)"
-            >
-              Zamknij
-            </button>
-            <button matButton="filled" (click)="formOpen.set(false)">
-              DODAJ
-            </button>
+            <button class="mr-3" matButton="tonal" (click)="formOpen.set(false)">Zamknij</button>
+            <button [disabled]="!itemModel().name" matButton="filled" (click)="add()">DODAJ</button>
           </div>
         </div>
       </div>

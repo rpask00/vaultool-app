@@ -1,1 +1,9 @@
-<p>item-form works!</p>
+<div
+  class="w-full flex items-center justify-center gap-3 border-3 border-blue-500 bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 py-4 px-6 rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-[1.01] hover:shadow-lg active:scale-[0.98]"
+>
+  @if (formOpen()) {
+
+  } @else {
+    <mat-icon class="text-blue-500! w-[unset]! h-[unset]! text-8xl!">add</mat-icon>
+  }
+</div>

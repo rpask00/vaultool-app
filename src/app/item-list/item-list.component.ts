@@ -9,6 +9,7 @@ import { MatMiniFabButton } from '@angular/material/button';
 import { MatChip, MatChipGrid } from '@angular/material/chips';
 import { AppService } from '../services/app.service';
 import { Item } from '../services/items.model';
+import { environment } from '../app.config';
 
 @Component({
   selector: 'app-item-list',
@@ -20,6 +21,7 @@ export class ItemListComponent implements OnInit {
   private store: Store<AppState> = inject(Store<AppState>);
 
   readonly items$ = this.store.select(selectItems);
+  protected apiUrl: string = environment.apiUrl;
 
   constructor(private appService: AppService) {}
 

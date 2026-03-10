@@ -40,6 +40,7 @@ export class ItemFormComponent implements OnInit {
     tags: [],
     name: '',
     description: '',
+    files: [],
   };
 
   readonly itemModel = signal<Item>({ ...this.emptyItem });

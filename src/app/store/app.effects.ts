@@ -1,20 +1,37 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { ItemsResource } from '../services/items-resource.service';
 import { addItem, deleteItem, loadItems, updateItem } from './app.actions';
+import { FilesResource } from '../services/files-resource.service';
 
 @Injectable()
 export class AppEffects {
   private actions$ = inject(Actions);
+
+  readonly itemsResource = inject(ItemsResource);
+  readonly filesResource = inject(FilesResource);
 
   loadItems$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadItems.action),
       switchMap(() =>
         this.itemsResource.getAll().pipe(
-          map((items) => loadItems.success({ items: items.items })),
+          switchMap((items) =>
+            forkJoin({
+              items: of(items.items),
+              files: this.filesResource.getAll(items.items.map((item) => item.id)),
+            }),
+          ),
+          map(({ items, files }) =>
+            loadItems.success({
+              items: items.map((item) => ({
+                ...item,
+                files: files.filter((f) => f.item_id === item.id),
+              })),
+            }),
+          ),
           catchError((err) => of(loadItems.failed({ error: err.message }))),
         ),
       ),
@@ -56,6 +73,4 @@ export class AppEffects {
       ),
     ),
   );
-
-  constructor(private itemsResource: ItemsResource) {}
 }

@@ -17,7 +17,7 @@ export enum FileCategory {
   OTHER = 999,
 }
 
-export interface File {
+export interface FileAttachment {
   id: number;
   item_id?: number;
   name: string;
@@ -30,5 +30,5 @@ export interface File {
 
 export interface Item extends ItemDto {
   id: number;
-  files: File[];
+  files: FileAttachment[];
 }

@@ -10,7 +10,27 @@
     <section clickStopPropagation class="w-full">
       <div class="flex w-full">
         <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 w-1/2 pr-5">
-          @for (_ of Array.from({ length: 5 }); track $index) {
+          @for (file of filesModel(); track file.id) {
+            <div
+              class="w-full aspect-square object-cover rounded-xl bg-sky-400/10 mr-2 mb-2 flex items-center justify-center relative"
+            >
+              <img
+                class="w-full rounded-xl"
+                [src]="apiUrl + '/uploads/' + file.id + '.' + file.ext"
+              />
+
+              <button
+                matMiniFab
+                class="-top-2.5 -right-2.5 bg-red-400! text-red-100!"
+                (click)="removeFile(file)"
+                style="position: absolute"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+
+          @for (_ of Array.from({ length: Math.max(5 - filesModel().length, 0) }); track $index) {
             <div
               class="w-full aspect-square object-cover rounded-xl bg-sky-400/10 mr-2 mb-2 flex items-center justify-center"
             >
@@ -27,7 +47,7 @@
 
         <div class="flex flex-col gap-2 w-1/2">
           <h1 class="mb-4">
-            @if (itemModel().id) {
+            @if (editedItem()?.id) {
               Edytuj przedmiot
             } @else {
               Dodaj przedmiot

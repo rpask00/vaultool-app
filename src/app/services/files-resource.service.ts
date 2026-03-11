@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { File, ItemDto } from './items.model';
+import { FileAttachment, ItemDto } from './items.model';
 import { environment } from '../app.config';
 
 @Injectable({
@@ -12,15 +12,15 @@ export class FilesResource {
 
   public getAll(itemIds: number[]) {
     const query = `?item_ids=${itemIds.join(',')}`;
-    return this._http.get<File[]>(`${environment.apiUrl}/${this.resource}${query}`);
+    return this._http.get<FileAttachment[]>(`${environment.apiUrl}/${this.resource}${query}`);
   }
 
   public create(item: ItemDto) {
-    return this._http.post<File>(`${environment.apiUrl}/${this.resource}`, item);
+    return this._http.post<FileAttachment>(`${environment.apiUrl}/${this.resource}`, item);
   }
 
   public update(id: number, item: ItemDto) {
-    return this._http.put<File>(`${environment.apiUrl}/${this.resource}/${id}`, item);
+    return this._http.put<FileAttachment>(`${environment.apiUrl}/${this.resource}/${id}`, item);
   }
 
   public delete(id: number) {

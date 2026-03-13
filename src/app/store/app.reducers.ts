@@ -1,11 +1,21 @@
 import { createReducer, on } from '@ngrx/store';
-import { addItem, deleteItem, loadItems, updateItem } from './app.actions';
+import {
+  addItem,
+  deleteFile,
+  deleteItem,
+  loadFiles,
+  loadItems,
+  updateFile,
+  updateItem,
+  uploadFiles,
+} from './app.actions';
 import { initialState } from './app.state';
 
 export const appReducer = createReducer(
   initialState,
   on(loadItems.action, (state) => ({ ...state, loading: true })),
   on(loadItems.success, (state, { items }) => ({ ...state, items, loading: false })),
+  on(loadFiles.success, (state, { files }) => ({ ...state, files: files })),
   on(loadItems.failed, (state) => ({ ...state, loading: false })),
 
   on(addItem.action, (state) => ({ ...state, loading: true })),
@@ -31,4 +41,16 @@ export const appReducer = createReducer(
     loading: false,
   })),
   on(deleteItem.failed, (state) => ({ ...state, loading: false })),
+  on(uploadFiles.success, (state, { files }) => ({
+    ...state,
+    files: [...state.files, ...files],
+  })),
+  on(updateFile.success, (state, { file }) => ({
+    ...state,
+    files: state.files.map((f) => (f.id === file.id ? file : f)),
+  })),
+  on(deleteFile.success, (state, { id }) => ({
+    ...state,
+    files: state.files.filter((f) => f.id !== id),
+  })),
 );

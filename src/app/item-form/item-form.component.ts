@@ -1,17 +1,19 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { ClickStopPropagationDirective } from '../../directives/click-stop-propagation.directive';
 import { NgClass } from '@angular/common';
 import { MatButton, MatMiniFabButton } from '@angular/material/button';
 import { form, FormField } from '@angular/forms/signals';
-import { FileAttachment, ItemDto } from '../services/items.model';
+import { FileAttachment, FileCategory, ItemDto } from '../services/items.model';
 import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.state';
-import { addItem, updateItem } from '../store/app.actions';
+import { addItem, deleteFile, updateFile, updateItem, uploadFiles } from '../store/app.actions';
 import { AppService } from '../services/app.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { environment } from '../app.config';
+import { Actions, ofType } from '@ngrx/effects';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-item-form',
@@ -31,6 +33,9 @@ import { environment } from '../app.config';
 })
 export class ItemFormComponent implements OnInit {
   readonly store: Store<AppState> = inject(Store<AppState>);
+  readonly actions$ = inject(Actions);
+  readonly destroyRef = inject(DestroyRef);
+
   private appService = inject(AppService);
 
   readonly formOpen = signal(false);
@@ -71,20 +76,49 @@ export class ItemFormComponent implements OnInit {
   }
   ngOnInit(): void {}
 
-  protected addPhoto() {}
+  protected uploadAttachments($event: Event) {
+    const fileList = ($event.target as HTMLInputElement).files;
+    if (!fileList) return;
+
+    this.store.dispatch(
+      uploadFiles.action({
+        file: {
+          priority: this.filesModel().length + 1,
+          category: FileCategory.PHOTO,
+        },
+        files: Array.from(fileList),
+      }),
+    );
+
+    this.actions$
+      .pipe(takeUntilDestroyed(this.destroyRef), ofType(uploadFiles.success), take(1))
+      .subscribe(({ files }) => this.filesModel.update((_files) => [..._files, ...files]));
+  }
 
   protected save() {
-    if (this.editedItem()?.id) {
+    const item_id = this.editedItem()?.id;
+    if (item_id) {
       this.store.dispatch(
         updateItem.action({
           item: this.itemModel(),
-          id: this.editedItem()?.id as number,
+          id: item_id as number,
         }),
       );
+
+      this.filesModel()
+        .map((file, i) => ({ ...file, priority: i + 1, item_id }))
+        .forEach((file) => this.store.dispatch(updateFile.action({ file })));
+
+      this.editedItem()?.files.forEach((file) => {
+        if (!this.filesModel().find((f) => f.id === file.id)) {
+          this.store.dispatch(deleteFile.action({ id: file.id }));
+        }
+      });
     } else {
       this.store.dispatch(
         addItem.action({
           item: this.itemModel(),
+          files: this.filesModel(),
         }),
       );
     }

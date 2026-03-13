@@ -1,9 +1,18 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { ItemsResource } from '../services/items-resource.service';
-import { addItem, deleteItem, loadItems, updateItem } from './app.actions';
+import {
+  addItem,
+  deleteFile,
+  deleteItem,
+  loadFiles,
+  loadItems,
+  updateFile,
+  updateItem,
+  uploadFiles,
+} from './app.actions';
 import { FilesResource } from '../services/files-resource.service';
 
 @Injectable()
@@ -18,21 +27,34 @@ export class AppEffects {
       ofType(loadItems.action),
       switchMap(() =>
         this.itemsResource.getAll().pipe(
-          switchMap((items) =>
-            forkJoin({
-              items: of(items.items),
-              files: this.filesResource.getAll(items.items.map((item) => item.id)),
-            }),
-          ),
-          map(({ items, files }) =>
-            loadItems.success({
-              items: items.map((item) => ({
-                ...item,
-                files: files.filter((f) => f.item_id === item.id),
-              })),
-            }),
+          map(({ items }) =>
+            loadItems.success({ items: items.map((item) => ({ ...item, files: [] })) }),
           ),
           catchError((err) => of(loadItems.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  loadFiles$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadItems.success),
+      switchMap(({ items }) =>
+        this.filesResource.getAll(items.map((item) => item.id)).pipe(
+          map((files) => loadFiles.success({ files })),
+          catchError((err) => of(loadFiles.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  createFiles$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(uploadFiles.action),
+      switchMap(({ file, files }) =>
+        this.filesResource.upload(file, files).pipe(
+          map((files) => uploadFiles.success({ files })),
+          catchError((err) => of(uploadFiles.failed({ error: err.message }))),
         ),
       ),
     ),
@@ -41,9 +63,14 @@ export class AppEffects {
   addItem$ = createEffect(() =>
     this.actions$.pipe(
       ofType(addItem.action),
-      switchMap(({ item }) =>
+      concatMap(({ item, files }) =>
         this.itemsResource.create(item).pipe(
-          map((item) => addItem.success({ item })),
+          concatMap((item) => [
+            addItem.success({ item }),
+            ...files.map((file, i) =>
+              updateFile.action({ file: { ...file, priority: i + 1, item_id: item.id } }),
+            ),
+          ]),
           catchError((err) => of(addItem.failed({ error: err.message }))),
         ),
       ),
@@ -53,7 +80,7 @@ export class AppEffects {
   updateItem$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateItem.action),
-      switchMap(({ item, id }) =>
+      concatMap(({ item, id }) =>
         this.itemsResource.update(id, item).pipe(
           map((item) => updateItem.success({ item })),
           catchError((err) => of(updateItem.failed({ error: err.message }))),
@@ -69,6 +96,30 @@ export class AppEffects {
         this.itemsResource.delete(id).pipe(
           map(() => deleteItem.success({ id })),
           catchError((err) => of(deleteItem.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  updateFile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateFile.action),
+      concatMap(({ file }) =>
+        this.filesResource.update(file.id, file).pipe(
+          map((file) => updateFile.success({ file })),
+          catchError((err) => of(updateFile.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  deleteFile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteFile.action),
+      concatMap(({ id }) =>
+        this.filesResource.delete(id).pipe(
+          map(() => deleteFile.success({ id })),
+          catchError((err) => of(deleteFile.failed({ error: err.message }))),
         ),
       ),
     ),

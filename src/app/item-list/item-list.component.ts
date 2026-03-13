@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from '../store/app.state';
 import { deleteItem, loadItems } from '../store/app.actions';
 import { AsyncPipe } from '@angular/common';
 import { selectItems } from '../store/app.selectors';
@@ -18,7 +17,7 @@ import { environment } from '../app.config';
   styleUrl: './item-list.component.css',
 })
 export class ItemListComponent implements OnInit {
-  private store: Store<AppState> = inject(Store<AppState>);
+  private store: Store<any> = inject(Store<any>);
 
   readonly items$ = this.store.select(selectItems);
   protected apiUrl: string = environment.apiUrl;

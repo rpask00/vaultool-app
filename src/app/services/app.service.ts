@@ -6,5 +6,5 @@ import { Item } from './items.model';
   providedIn: 'root',
 })
 export class AppService {
-  public editItem$ = new Subject<Item | null>()
+  public editItem$ = new Subject<Item | null>();
 }

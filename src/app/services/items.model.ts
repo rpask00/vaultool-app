@@ -17,13 +17,16 @@ export enum FileCategory {
   OTHER = 999,
 }
 
-export interface FileAttachment {
-  id: number;
+export interface FileAttachmentDto {
   item_id?: number;
-  name: string;
   priority: number;
-  ext: string;
   category: FileCategory;
+}
+
+export interface FileAttachment extends FileAttachmentDto {
+  id: number;
+  ext: string;
+  name: string;
   created_at: string;
   size: number;
 }

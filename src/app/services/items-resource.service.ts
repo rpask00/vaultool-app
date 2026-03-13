@@ -10,8 +10,8 @@ export class ItemsResource {
   readonly resource = 'items';
   constructor(private readonly _http: HttpClient) {}
 
-  public getAll(name?: string) {
-    const query = name ? `?name=${name}` : '';
+  public getAll(name?: string, page?: number, per_page?: number) {
+    const query = `?name=${name || ''}&page=${page || 1}&per_page=${per_page || 10}`;
     return this._http.get<ListResponse<Item>>(`${environment.apiUrl}/${this.resource}${query}`);
   }
 

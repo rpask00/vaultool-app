@@ -14,7 +14,15 @@ import { initialState } from './app.state';
 export const appReducer = createReducer(
   initialState,
   on(loadItems.action, (state) => ({ ...state, loading: true })),
-  on(loadItems.success, (state, { items }) => ({ ...state, items, loading: false })),
+  on(loadItems.success, (state, { response }) => ({
+    ...state,
+    total_items: response.total,
+    items: response.items.map((item) => ({
+      ...item,
+      files: [],
+    })),
+    loading: false,
+  })),
   on(loadFiles.success, (state, { files }) => ({ ...state, files: files })),
   on(loadItems.failed, (state) => ({ ...state, loading: false })),
 

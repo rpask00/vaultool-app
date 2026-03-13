@@ -25,11 +25,9 @@ export class AppEffects {
   loadItems$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadItems.action),
-      switchMap(() =>
-        this.itemsResource.getAll().pipe(
-          map(({ items }) =>
-            loadItems.success({ items: items.map((item) => ({ ...item, files: [] })) }),
-          ),
+      switchMap(({ search, page }) =>
+        this.itemsResource.getAll(search, page).pipe(
+          map((response) => loadItems.success({ response })),
           catchError((err) => of(loadItems.failed({ error: err.message }))),
         ),
       ),
@@ -39,8 +37,8 @@ export class AppEffects {
   loadFiles$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadItems.success),
-      switchMap(({ items }) =>
-        this.filesResource.getAll(items.map((item) => item.id)).pipe(
+      switchMap(({ response }) =>
+        this.filesResource.getAll(response.items.map((item) => item.id)).pipe(
           map((files) => loadFiles.success({ files })),
           catchError((err) => of(loadFiles.failed({ error: err.message }))),
         ),

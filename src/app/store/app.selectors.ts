@@ -3,7 +3,6 @@ import { createSelector } from '@ngrx/store';
 import { Item } from '../services/items.model';
 
 const appSelector = (state: { app: AppState }) => state.app;
-export const selectRFState = (state: { app: AppState }) => state.app;
 
 export const selectItems = createSelector(
   appSelector,
@@ -13,3 +12,5 @@ export const selectItems = createSelector(
       files: state.files.filter((file) => file.item_id === item.id),
     })) as Item[],
 );
+
+export const selectTotalItems = createSelector(appSelector, (state) => state.total_items);

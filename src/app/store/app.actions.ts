@@ -1,9 +1,15 @@
 import { createAction, props } from '@ngrx/store';
-import { FileAttachment, FileAttachmentDto, Item, ItemDto } from '../services/items.model';
+import {
+  FileAttachment,
+  FileAttachmentDto,
+  Item,
+  ItemDto,
+  ListResponse,
+} from '../services/items.model';
 
 export const loadItems = {
-  action: createAction('[App] Load Items'),
-  success: createAction('[App] Load Items Success', props<{ items: Item[] }>()),
+  action: createAction('[App] Load Items', props<{ search: string; page: number }>()),
+  success: createAction('[App] Load Items Success', props<{ response: ListResponse<Item> }>()),
   failed: createAction('[App] Load Items Failed', props<{ error: string }>()),
 };
 

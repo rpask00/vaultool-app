@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { deleteItem, loadItems } from '../store/app.actions';
+import { deleteItem, loadItems, searchItems } from '../store/app.actions';
 import { AsyncPipe } from '@angular/common';
 import { selectItems, selectTotalItems } from '../store/app.selectors';
 import { MatIcon } from '@angular/material/icon';
@@ -68,5 +68,9 @@ export class ItemListComponent implements OnInit {
 
   protected delete(id: number) {
     this.store.dispatch(deleteItem.action({ id }));
+  }
+
+  protected searchByPhoto(photo: File) {
+    this.store.dispatch(searchItems.action({ photo }));
   }
 }

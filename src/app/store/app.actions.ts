@@ -5,12 +5,19 @@ import {
   Item,
   ItemDto,
   ListResponse,
+  SearchItemResult,
 } from '../services/items.model';
 
 export const loadItems = {
   action: createAction('[App] Load Items', props<{ search: string; page: number }>()),
   success: createAction('[App] Load Items Success', props<{ response: ListResponse<Item> }>()),
   failed: createAction('[App] Load Items Failed', props<{ error: string }>()),
+};
+
+export const searchItems = {
+  action: createAction('[App] Search Items', props<{ photo: File }>()),
+  success: createAction('[App] Search Items Success', props<{ results: SearchItemResult[] }>()),
+  failed: createAction('[App] Search Items Failed', props<{ error: string }>()),
 };
 
 export const loadFiles = {

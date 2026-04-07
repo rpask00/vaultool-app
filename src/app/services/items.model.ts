@@ -35,3 +35,8 @@ export interface Item extends ItemDto {
   id: number;
   files: FileAttachment[];
 }
+
+export interface SearchItemResult {
+  item: number;
+  confidence: number;
+}

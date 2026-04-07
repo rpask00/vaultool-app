@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, signal, ViewChild } from '@angular/core';
 
 declare const SelfieSegmentation: any;
 
@@ -14,6 +14,7 @@ export class FindItemComponent {
   @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
   @ViewChild('outputCanvas') outputCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('captureCanvas') captureCanvas!: ElementRef<HTMLCanvasElement>;
+  @Output() emitPhoto = new EventEmitter<File>();
 
   streaming = signal(false);
   blurAmount = signal(10);
@@ -22,6 +23,8 @@ export class FindItemComponent {
   private stream: MediaStream | null = null;
   private segmentation: any = null;
   private animFrameId: number | null = null;
+
+  constructor() {}
 
   async toggleCamera() {
     if (this.streaming()) {
@@ -112,12 +115,23 @@ export class FindItemComponent {
     this.streaming.set(false);
   }
 
+  base64ToFile(base64: string, mimeType = 'image/png') {
+    const byteString = atob(base64.split(',')[1] ?? base64);
+    const buffer = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      buffer[i] = byteString.charCodeAt(i);
+    }
+    return new File([buffer], 'photo.png', { type: mimeType });
+  }
+
   takePhoto() {
     const src = this.outputCanvas.nativeElement;
     const canvas = this.captureCanvas.nativeElement;
     canvas.width = src.width;
     canvas.height = src.height;
     canvas.getContext('2d')!.drawImage(src, 0, 0);
+    this.emitPhoto.emit(this.base64ToFile(canvas.toDataURL('image/png')));
+
     this.photoUrl.set(canvas.toDataURL('image/png'));
   }
 

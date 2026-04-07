@@ -9,6 +9,7 @@ import {
   deleteItem,
   loadFiles,
   loadItems,
+  searchItems,
   updateFile,
   updateItem,
   uploadFiles,
@@ -29,6 +30,21 @@ export class AppEffects {
         this.itemsResource.getAll(search, page).pipe(
           map((response) => loadItems.success({ response })),
           catchError((err) => of(loadItems.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  searchItems$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchItems.action),
+      switchMap(({ photo }) =>
+        this.itemsResource.getByPhoto(photo).pipe(
+          map((results) => {
+            console.log(results);
+            return searchItems.success({ results });
+          }),
+          catchError((err) => of(searchItems.failed({ error: err.message }))),
         ),
       ),
     ),

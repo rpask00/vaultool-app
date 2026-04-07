@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Item, ItemDto, ListResponse } from './items.model';
+import { Item, ItemDto, ListResponse, SearchItemResult } from './items.model';
 import { environment } from '../app.config';
 
 @Injectable({
@@ -17,6 +17,13 @@ export class ItemsResource {
 
   public getById(id: string) {
     return this._http.get<Item>(`${environment.apiUrl}/${this.resource}/${id}`);
+  }
+
+  public getByPhoto(photo: File) {
+    const form = new FormData();
+    form.append('image', photo);
+
+    return this._http.post<SearchItemResult[]>(`http://127.0.0.1:5000/query`, form);
   }
 
   public create(item: ItemDto) {

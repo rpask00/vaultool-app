@@ -1,64 +1,106 @@
 <section
-  class="flex flex-col w-full h-full! border-3 border-blue-500 bg-blue-500/20 text-blue-200 py-4 px-6 rounded-xl"
+  class="flex w-full h-full! border-3 border-blue-500 bg-blue-500/20 text-blue-200 py-4 px-6 rounded-xl gap-4"
 >
-  <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
-    <mat-label>Szukaj</mat-label>
-    <input matInput [formControl]="searchControl" />
-    @if (searchControl.value) {
-      <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </mat-form-field>
-
-  <mat-paginator
-    class="flex! justify-center! my-3 bg-blue-950/70! justify-self-end"
-    (page)="pageControl.setValue($event.pageIndex + 1)"
-    [length]="totalItems$ | async"
-    [pageSize]="10"
-    [showFirstLastButtons]="true"
-    [hidePageSize]="true"
-    aria-label="Select page"
-  >
-  </mat-paginator>
-
-  @if (items$ | async; as items) {
-    @for (item of items; track item.id) {
-      <div class="flex w-full border-2 border-blue-400/20 mb-4 p-3 rounded-lg">
-        @if (item.files.length > 0) {
-          <img
-            class="w-30 rounded-lg mr-4"
-            [src]="apiUrl + '/uploads/' + item.files[0].id + '.' + item.files[0].ext"
-          />
+  <div class="flex flex-col gap-4 flex-1">
+    @if (!streaming()) {
+      <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Szukaj</mat-label>
+        <input matInput [formControl]="searchControl" />
+        @if (searchControl.value) {
+          <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
         }
-        <div class="flex flex-col w-full">
-          <h1 class="text-3xl font-semibold mb-3">{{ item.name }}</h1>
-          <p class="text-1xl whitespace-break-spaces">{{ item.description }}</p>
+      </mat-form-field>
 
-          <div>
-            <mat-chip-grid class="mt-3">
-              @for (tag of item.tags; track tag) {
-                <mat-chip>
-                  {{ tag }}
-                </mat-chip>
-              }
-            </mat-chip-grid>
-          </div>
+      <button mat-raised-button color="primary" (click)="streaming.set(true)">
+        Dodaj przedmiot
+      </button>
 
-          <div class="flex w-full justify-end mt-auto gap-4">
-            <button class="bg-red-400/30! text-red-100/50!" mat-mini-fab (click)="delete(item.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button class="bg-cyan-700/30! text-cyan-300-100/50!" mat-mini-fab (click)="edit(item)">
-              <mat-icon>edit</mat-icon>
-            </button>
+      <mat-paginator
+        class="flex! justify-center! bg-blue-950/70! justify-self-end"
+        (page)="pageControl.setValue($event.pageIndex + 1)"
+        [length]="totalItems$ | async"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        [hidePageSize]="true"
+        aria-label="Select page"
+      >
+      </mat-paginator>
+    }
+
+    @if (items$ | async; as items) {
+      @for (item of items; track item.id) {
+        <div class="flex w-full border-2 border-blue-400/20 p-3 rounded-lg">
+          @if (item.files.length > 0) {
+            <img
+              class="w-30 rounded-lg mr-4"
+              [src]="apiUrl + '/uploads/' + item.files[0].id + '.' + item.files[0].ext"
+            />
+          }
+          <div class="flex flex-col w-full">
+            <h1 class="text-3xl font-semibold mb-3">{{ item.name }}</h1>
+            <p class="text-1xl whitespace-break-spaces">{{ item.description }}</p>
+
+            <div>
+              <mat-chip-grid class="mt-3">
+                @for (tag of item.tags; track tag) {
+                  <mat-chip>
+                    {{ tag }}
+                  </mat-chip>
+                }
+              </mat-chip-grid>
+            </div>
+
+            <div class="flex w-full justify-end mt-auto gap-4">
+              <button
+                class="bg-red-400/30! text-red-100/50!"
+                mat-mini-fab
+                (click)="delete(item.id)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button
+                class="bg-cyan-700/30! text-cyan-300-100/50!"
+                mat-mini-fab
+                (click)="edit(item)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    } @empty {
-      <div class="flex grow items-center justify-center">
-        <p class="text-2xl my-10">Brak przedmiotów do wyświetlenia</p>
-      </div>
+      } @empty {
+        <div class="flex grow items-center justify-center">
+          <p class="text-2xl my-10">Brak przedmiotów do wyświetlenia</p>
+        </div>
+      }
     }
+  </div>
+  @if (streaming()) {
+    <div class="flex flex-col gap-4">
+      <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Szukaj</mat-label>
+        <input matInput [formControl]="searchControl" />
+        @if (searchControl.value) {
+          <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-paginator
+        class="flex! justify-center! bg-blue-950/70! justify-self-end"
+        (page)="pageControl.setValue($event.pageIndex + 1)"
+        [length]="totalItems$ | async"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        [hidePageSize]="true"
+        aria-label="Select page"
+      >
+      </mat-paginator>
+
+      <app-find-item></app-find-item>
+    </div>
   }
 </section>

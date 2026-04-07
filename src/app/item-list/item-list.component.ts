@@ -4,7 +4,7 @@ import { deleteItem, loadItems } from '../store/app.actions';
 import { AsyncPipe } from '@angular/common';
 import { selectItems, selectTotalItems } from '../store/app.selectors';
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
+import { MatButton, MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatChip, MatChipGrid } from '@angular/material/chips';
 import { AppService } from '../services/app.service';
 import { Item } from '../services/items.model';
@@ -14,6 +14,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { combineLatest, debounceTime, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatPaginator } from '@angular/material/paginator';
+import { FindItemComponent } from '../find-item/find-item.component';
 
 @Component({
   selector: 'app-item-list',
@@ -30,6 +31,8 @@ import { MatPaginator } from '@angular/material/paginator';
     MatPaginator,
     MatSuffix,
     MatIconButton,
+    FindItemComponent,
+    MatButton,
   ],
   templateUrl: './item-list.component.html',
   styleUrl: './item-list.component.css',
@@ -39,6 +42,8 @@ export class ItemListComponent implements OnInit {
   readonly destroyRef = inject(DestroyRef);
 
   readonly totalItems$ = this.store.select(selectTotalItems);
+
+  readonly streaming = signal(false);
 
   readonly searchControl = new FormControl<string>('', { nonNullable: true });
   readonly pageControl = new FormControl(1, { nonNullable: true });
@@ -50,7 +55,7 @@ export class ItemListComponent implements OnInit {
 
   ngOnInit(): void {
     combineLatest([
-      this.searchControl.valueChanges.pipe(startWith('twoja stara')),
+      this.searchControl.valueChanges.pipe(startWith('')),
       this.pageControl.valueChanges.pipe(startWith(1)),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(50))

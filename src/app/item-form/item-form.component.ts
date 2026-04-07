@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, effect, HostListener, inject, OnInit, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { ClickStopPropagationDirective } from '../../directives/click-stop-propagation.directive';
@@ -14,6 +14,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { environment } from '../app.config';
 import { Actions, ofType } from '@ngrx/effects';
 import { take } from 'rxjs';
+import { DragDropDirective } from './drag-drop.directive';
 
 @Component({
   selector: 'app-item-form',
@@ -27,6 +28,7 @@ import { take } from 'rxjs';
     MatButton,
     FormField,
     MatMiniFabButton,
+    DragDropDirective,
   ],
   templateUrl: './item-form.component.html',
   styleUrl: './item-form.component.css',
@@ -68,16 +70,16 @@ export class ItemFormComponent implements OnInit {
 
     effect(() => {
       if (!this.formOpen()) {
-        this.itemModel.set({ ...this.emptyItem });
-        this.filesModel.set([]);
-        this.appService.editItem$.next(null);
+        this.resetForm();
       }
     });
   }
   ngOnInit(): void {}
 
-  protected uploadAttachments($event: Event) {
-    const fileList = ($event.target as HTMLInputElement).files;
+  protected uploadAttachments($event: Event | DragEvent) {
+    const fileList =
+      ($event.target as HTMLInputElement).files || ($event as DragEvent)?.dataTransfer?.files;
+
     if (!fileList) return;
 
     this.store.dispatch(
@@ -123,7 +125,8 @@ export class ItemFormComponent implements OnInit {
       );
     }
 
-    this.formOpen.set(false);
+    // this.formOpen.set(false);
+    this.resetForm();
   }
 
   protected readonly Math = Math;
@@ -131,5 +134,27 @@ export class ItemFormComponent implements OnInit {
 
   protected removeFile(file: FileAttachment) {
     this.filesModel.update((files) => files.filter((f) => f !== file));
+  }
+
+  protected resetForm() {
+    this.itemModel.set({ ...this.emptyItem });
+    this.filesModel.set([]);
+    this.appService.editItem$.next(null);
+  }
+
+  @HostListener('window:keydown.enter', ['$event'])
+  onEnter(event: Event) {
+    if (this.formOpen()) {
+      event.preventDefault();
+      this.save();
+    }
+  }
+
+  @HostListener('window:keydown.escape', ['$event'])
+  onEscape(event: Event) {
+    if (this.formOpen()) {
+      event.preventDefault();
+      this.formOpen.set(false);
+    }
   }
 }

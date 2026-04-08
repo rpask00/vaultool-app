@@ -39,12 +39,34 @@ export class AppEffects {
     this.actions$.pipe(
       ofType(searchItems.action),
       switchMap(({ photo }) =>
-        this.itemsResource.getByPhoto(photo).pipe(
+        this.itemsResource.searchByPhoto(photo).pipe(
           map((results) => {
             console.log(results);
             return searchItems.success({ results });
           }),
           catchError((err) => of(searchItems.failed({ error: err.message }))),
+        ),
+      ),
+    ),
+  );
+
+  searchItemsSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(searchItems.success),
+      switchMap(({ results }) =>
+        this.itemsResource.getByIds(results.map((r) => r.item_id)).pipe(
+          map((response) =>
+            loadItems.success({
+              response: {
+                ...response,
+                items: response.items.map((item) => ({
+                  ...item,
+                  confidence: results.find((r) => item.id == r.item_id)?.confidence,
+                })),
+              },
+            }),
+          ),
+          catchError((err) => of(loadItems.failed({ error: err.message }))),
         ),
       ),
     ),

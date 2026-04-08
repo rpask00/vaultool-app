@@ -15,11 +15,14 @@ export class ItemsResource {
     return this._http.get<ListResponse<Item>>(`${environment.apiUrl}/${this.resource}${query}`);
   }
 
-  public getById(id: string) {
-    return this._http.get<Item>(`${environment.apiUrl}/${this.resource}/${id}`);
+  public getByIds(ids: number[]) {
+    const query = `ids=${ids.join(',')}`;
+    return this._http.get<ListResponse<Item>>(
+      `${environment.apiUrl}/${this.resource}/batch?${query}`,
+    );
   }
 
-  public getByPhoto(photo: File) {
+  public searchByPhoto(photo: File) {
     const form = new FormData();
     form.append('image', photo);
 

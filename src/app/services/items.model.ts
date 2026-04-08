@@ -33,10 +33,11 @@ export interface FileAttachment extends FileAttachmentDto {
 
 export interface Item extends ItemDto {
   id: number;
+  confidence?: number;
   files: FileAttachment[];
 }
 
 export interface SearchItemResult {
-  item: number;
+  item_id: number;
   confidence: number;
 }

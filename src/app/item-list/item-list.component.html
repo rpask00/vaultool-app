@@ -2,33 +2,6 @@
   class="flex w-full h-full! border-3 border-blue-500 bg-blue-500/20 text-blue-200 py-4 px-6 rounded-xl gap-4"
 >
   <div class="flex flex-col gap-4 flex-1">
-    @if (!streaming()) {
-      <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Szukaj</mat-label>
-        <input matInput [formControl]="searchControl" />
-        @if (searchControl.value) {
-          <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <button mat-raised-button color="primary" (click)="streaming.set(true)">
-        Dodaj przedmiot
-      </button>
-
-      <mat-paginator
-        class="flex! justify-center! bg-blue-950/70! justify-self-end"
-        (page)="pageControl.setValue($event.pageIndex + 1)"
-        [length]="totalItems$ | async"
-        [pageSize]="10"
-        [showFirstLastButtons]="true"
-        [hidePageSize]="true"
-        aria-label="Select page"
-      >
-      </mat-paginator>
-    }
-
     @if (items$ | async; as items) {
       @for (item of items; track item.id) {
         <div class="flex w-full border-2 border-blue-400/20 p-3 rounded-lg">
@@ -78,30 +51,28 @@
       }
     }
   </div>
-  @if (streaming()) {
-    <div class="flex flex-col gap-4 width-1/3">
-      <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Szukaj</mat-label>
-        <input matInput [formControl]="searchControl" />
-        @if (searchControl.value) {
-          <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
+  <div class="flex flex-col gap-4 w-1/3 min-w-[300px] max-w-[500px]">
+    <mat-form-field class="w-full" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Szukaj</mat-label>
+      <input matInput [formControl]="searchControl" />
+      @if (searchControl.value) {
+        <button matSuffix matIconButton class="mr-3" (click)="searchControl.setValue('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
 
-      <mat-paginator
-        class="flex! justify-center! bg-blue-950/70! justify-self-end"
-        (page)="pageControl.setValue($event.pageIndex + 1)"
-        [length]="totalItems$ | async"
-        [pageSize]="10"
-        [showFirstLastButtons]="true"
-        [hidePageSize]="true"
-        aria-label="Select page"
-      >
-      </mat-paginator>
+    <mat-paginator
+      class="flex! justify-center! bg-blue-950/70! justify-self-end"
+      (page)="pageControl.setValue($event.pageIndex + 1)"
+      [length]="totalItems$ | async"
+      [pageSize]="10"
+      [showFirstLastButtons]="true"
+      [hidePageSize]="true"
+      aria-label="Select page"
+    >
+    </mat-paginator>
 
-      <app-find-item (emitPhoto)="searchByPhoto($event)"></app-find-item>
-    </div>
-  }
+    <app-find-item (emitPhoto)="searchByPhoto($event)"></app-find-item>
+  </div>
 </section>

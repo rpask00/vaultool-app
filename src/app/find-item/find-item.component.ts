@@ -12,11 +12,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { timer } from 'rxjs';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-find-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatButton],
   templateUrl: `find-item.component.html`,
   styleUrl: `find-item.component.css`,
 })

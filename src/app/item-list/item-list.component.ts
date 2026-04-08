@@ -1,10 +1,10 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { deleteItem, loadItems, searchItems } from '../store/app.actions';
 import { AsyncPipe } from '@angular/common';
 import { selectItems, selectTotalItems } from '../store/app.selectors';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatIconButton, MatMiniFabButton } from '@angular/material/button';
+import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatChip, MatChipGrid } from '@angular/material/chips';
 import { AppService } from '../services/app.service';
 import { Item } from '../services/items.model';
@@ -31,7 +31,6 @@ import { FindItemComponent } from '../find-item/find-item.component';
     MatPaginator,
     MatSuffix,
     MatIconButton,
-    MatButton,
     FindItemComponent,
   ],
   templateUrl: './item-list.component.html',
@@ -42,8 +41,6 @@ export class ItemListComponent implements OnInit {
   readonly destroyRef = inject(DestroyRef);
 
   readonly totalItems$ = this.store.select(selectTotalItems);
-
-  readonly streaming = signal(false);
 
   readonly searchControl = new FormControl<string>('', { nonNullable: true });
   readonly pageControl = new FormControl(1, { nonNullable: true });

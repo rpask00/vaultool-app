@@ -1,16 +1,21 @@
 <div class="container">
-  <div class="video-wrapper">
+  <div class="video-wrapper bg-blue-950/70">
     <video #videoEl [class.hidden]="!streaming()" autoplay playsinline></video>
     <div class="placeholder" [class.hidden]="streaming()">
       <span>Camera is off</span>
     </div>
   </div>
 
-  <div class="controls">
-    <button (click)="toggleCamera()" [class.danger]="streaming()">
+  <div class="flex justify-center">
+    <button
+      mat-raised-button
+      (click)="toggleCamera()"
+      class="w-full bg-blue-500 text-white"
+
+      [class.opacity-50]="!streaming()"
+    >
       {{ streaming() ? 'Stop Camera' : 'Open Camera' }}
     </button>
-    <button (click)="takePhoto()" [disabled]="!streaming()">📸 Take Photo</button>
   </div>
 
   <canvas #canvasEl class="hidden"></canvas>

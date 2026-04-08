@@ -59,10 +59,12 @@ export class AppEffects {
             loadItems.success({
               response: {
                 ...response,
-                items: response.items.map((item) => ({
-                  ...item,
-                  confidence: results.find((r) => item.id == r.item_id)?.confidence,
-                })),
+                items: response.items
+                  .map((item) => ({
+                    ...item,
+                    confidence: results.find((r) => item.id == r.item_id)?.confidence,
+                  }))
+                  .sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)),
               },
             }),
           ),

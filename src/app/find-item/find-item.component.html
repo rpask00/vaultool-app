@@ -1,10 +1,6 @@
 <div class="container">
-
   <div class="video-wrapper">
-    <!-- Hidden raw video feed (input to segmentation) -->
-    <video #videoEl autoplay playsinline class="hidden"></video>
-    <!-- Output canvas shown to user -->
-    <canvas #outputCanvas [class.hidden]="!streaming()"></canvas>
+    <video #videoEl [class.hidden]="!streaming()" autoplay playsinline></video>
     <div class="placeholder" [class.hidden]="streaming()">
       <span>Camera is off</span>
     </div>
@@ -12,35 +8,10 @@
 
   <div class="controls">
     <button (click)="toggleCamera()" [class.danger]="streaming()">
-      {{ streaming() ? '⏹ Stop Camera' : '▶ Open Camera' }}
+      {{ streaming() ? 'Stop Camera' : 'Open Camera' }}
     </button>
-
-    <div class="blur-control" [class.disabled]="!streaming()">
-      <label>Blur: {{ blurAmount() }}px</label>
-      <input
-        type="range"
-        min="0"
-        max="20"
-        step="1"
-        [value]="blurAmount()"
-        (input)="blurAmount.set(+$any($event.target).value)"
-        [disabled]="!streaming()"
-      />
-    </div>
-
     <button (click)="takePhoto()" [disabled]="!streaming()">📸 Take Photo</button>
   </div>
 
-  @if (photoUrl()) {
-    <div class="photo-result">
-      <h2>Captured Photo</h2>
-      <img [src]="photoUrl()" alt="Captured photo" />
-      <a [href]="photoUrl()" download="photo.png">
-        <button>⬇ Download</button>
-      </a>
-    </div>
-  }
-
-  <!-- Hidden canvas used for photo capture -->
-  <canvas #captureCanvas class="hidden"></canvas>
+  <canvas #canvasEl class="hidden"></canvas>
 </div>
